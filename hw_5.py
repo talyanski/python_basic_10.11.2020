@@ -3,11 +3,13 @@
 
 name = input("Введите ваше Имя: ")
 last_name = input("Введите вашу Фамилию: ")
-adress = input("Введите ваш адрес: ")
+adr = input("Введите ваш адрес: ")
 with open("text_user.txt", "w ", encoding="utf-8") as user_data:
-      # user_data.writelines({f"{{name: {name}}}\n{{last_name: {last_name}}}\n{{adress: {adress}}}\n"})
-      user_data.writelines({f"{name}\n{last_name}\n{adress}\n"})
+      # user_data.writelines({f"{{name: {name}}}\n{{last_name: {last_name}}}\n{{adr: {adr}}}\n"})
+      user_data.writelines({f"{name}\n{last_name}\n{adr}\n"})
 
+
+#  ---------------------------------------------------------------------------------------------------------------------
 #  2. Создать текстовый файл (не программно), сохранить в нем несколько строк,
 #  выполнить подсчет количества строк, количества слов в каждой строке.
 
@@ -18,9 +20,10 @@ print(f"количество строк: {line}")
 for line in content:
       count = len(line.split())
       print(f"количество слов в строке {line}{count}")
-
 user_read.close()
 
+
+#  ---------------------------------------------------------------------------------------------------------------------
 #  3. Создать текстовый файл (не программно), построчно записать фамилии сотрудников и величину их окладов.
 #  Определить, кто из сотрудников имеет оклад менее 20 тыс., вывести фамилии этих сотрудников.
 #  Выполнить подсчет средней величины дохода сотрудников.
@@ -30,6 +33,8 @@ with open("employees.txt", "r", encoding="utf-8") as wage:
       print(f"сотрудники с ЗП меньше 20000руб. {[i[0] for i in my_dict.items() if i[1] < 20000]}\n"
             f"средняя величина дохода сотрудников: {round(sum(my_dict.values()) / len(my_dict), 2)}руб.")
 
+
+#  ---------------------------------------------------------------------------------------------------------------------
 #  4. Создать (не программно) текстовый файл со следующим содержимым:
 # One — 1
 # Two — 2
@@ -38,11 +43,26 @@ with open("employees.txt", "r", encoding="utf-8") as wage:
 # Необходимо написать программу, открывающую файл на чтение и считывающую построчно данные. При этом английские
 # числительные должны заменяться на русские. Новый блок строк должен записываться в новый текстовый файл.
 
+numbers_dict = {'One': 'Один', 'Two': 'Два', 'Three': 'Три', 'Four': 'Четыре'}
 
+with open("text_task_4_new.txt", "w", encoding="utf-8") as new_numbers:
+    with open("text_task_4.txt", "r", encoding="utf-8") as numbers:
+        new_numbers.writelines([line.replace(line.split()[0], numbers_dict.get(line.split()[0])) for line in numbers])
+
+
+#  ---------------------------------------------------------------------------------------------------------------------
 #  5. Создать (программно) текстовый файл, записать в него программно набор чисел, разделенных пробелами.
 #  Программа должна подсчитывать сумму чисел в файле и выводить ее на экран.
 
+from random import randint
 
+with open("text_task_5.txt", "w+", encoding="utf-8") as str_numbers:
+    str_numbers.write(" ".join([str(randint(1, 100)) for i in range(100)]))
+    str_numbers.seek(0)
+    print(sum(map(int, str_numbers.readline().split())))
+
+
+#  ---------------------------------------------------------------------------------------------------------------------
 #  6. Необходимо создать (не программно) текстовый файл, где каждая строка описывает учебный предмет и наличие
 #  лекционных, практических и лабораторных занятий по этому предмету и их количество. Важно, чтобы для каждого
 #  предмета не обязательно были все типы занятий. Сформировать словарь, содержащий название предмета и общее количество
@@ -56,6 +76,15 @@ with open("employees.txt", "r", encoding="utf-8") as wage:
 # {“Информатика”: 170, “Физика”: 40, “Физкультура”: 30}
 
 
+with open("text_task_6.txt", encoding="utf-8") as new_dict:
+    line = new_dict.readlines()
+    for key in line:
+        new_hour = "".join((i if i in '1234567890' else ' ') for i in key)
+        sum_hour = [int(i) for i in new_hour.split()]
+        print(f'{key.split()[0]} {sum(sum_hour)}')
+
+
+#  ---------------------------------------------------------------------------------------------------------------------
 #  7. Создать (не программно) текстовый файл, в котором каждая строка должна содержать данные о фирме: название,
 #  форма собственности, выручка, издержки.
 # Пример строки файла: firm_1 ООО 10000 5000.
@@ -70,3 +99,15 @@ with open("employees.txt", "r", encoding="utf-8") as wage:
 #
 # Подсказка: использовать менеджеры контекста.
 
+import json
+
+with open("text_task_7_new.txt", 'w', encoding="utf-8") as new_firm:
+    with open("text_task_7.txt", encoding="utf-8") as firm:
+        profit = {line.split()[0]: int(line.split()[2]) - int(line.split()[3]) for line in firm}
+        end_list = [profit, {"средняя прибыль": round(sum([int(prof) for prof in profit.values() if int(prof) > 0]) /
+                                                      len([int(prof) for prof in profit.values() if int(prof) > 0]))}]
+
+    json.dump(end_list, new_firm, ensure_ascii=False, indent=3)
+
+#  ensure_ascii=False  -  оставляет русские буквы
+#  indent=3   -  отсуп слева 3 пункта
